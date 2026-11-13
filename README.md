@@ -30,17 +30,50 @@ The proposed model extends YOLO11n-MFF with:
 
 **Architecture figure:** To be added at `assets/architecture.png` after the design is finalized.
 
-## 4. Models and Experimental Comparisons
+## 4. Models and Performance Comparison
 
-| Model | Role | Status |
+### 4.1. Experimental models
+
+| Model | Role | Current status |
 |---|---|---|
-| YOLO11n | Standard lightweight baseline | Planned / update status |
-| YOLO26n | Additional lightweight architecture comparison | Planned / update status |
-| YOLO11n-MFF | Reference method to reproduce | Reproduction in progress |
-| YOLO11n-MFF-Wavelet (+ P2) | Proposed research model | In development |
-| Parameter-/channel-matched non-wavelet variant | Ablation for architectural control | Planned |
+| YOLO11n | Lightweight baseline | Evaluated at 1024 × 1024 (see Section 4.3) |
+| YOLO26n | Additional architecture comparison | Planned; results not yet reported |
+| YOLO11n-MFF | Reference method for reproduction | Reproduction in progress; results not yet reported |
+| Wavelet-YOLO11n-P2 | Proposed variant named in the current results table | Evaluated at 1024 × 1024 (see Section 4.3) |
+| Parameter-/channel-matched non-wavelet variant | Ablation to isolate the impact of wavelet processing | Planned; results not yet reported |
 
-> A comparison with YOLO26n alone does not isolate the effect of Wavelet modules. Capacity-matched ablations are needed to evaluate that hypothesis.
+**Model naming to confirm:** The experimental results table labels the proposed model `Wavelet-YOLO11n-P2`, whereas the broader project description uses `YOLO11n-MFF-Wavelet (+ P2)`. Confirm that these refer to the same implemented architecture before using the names interchangeably.
+
+### 4.2. Results reported in prior studies
+
+*Values transcribed from the group's comparison table; original papers and evaluation protocols have not been independently audited here.*
+
+| Model | Input size | Parameters (M) | FLOPs (G) | FPS | mAP@0.5 (%) | mAP@0.5:0.95 (%) |
+|---|---|---:|---:|---:|---:|---:|
+| CXR-RefineDet [1] | 512 × 512 | 34.20 | 42.5 | 6.8 | 16.90 | 8.40 |
+| YOLOv8n Baseline [13] | 640 × 640 | 3.01 | 8.1 | 82.5 | 33.80 | 18.20 |
+| YOLO-CXR [8] | 640 × 640 | 11.20 | 28.6 | 55.0 | 33.80 | — |
+| Sensitivity-YOLOv11 [6] | 640 × 640 | 20.10 | 68.5 | 45.0 | 38.70 | — |
+| YOLOv5nu [4] | 640 × 640 | 1.80 | 4.2 | 95.0 | 38.80 | 20.70 |
+| YOLO11n Baseline (PLOS ONE) [4] | 640 × 640 | 2.59 | 6.4 | 78.1 | 38.80 | 21.40 |
+| CEFEN-AFFN (Sci Rep 2026) [5] | 640 × 640 | — | — | — | 40.10 | 19.60 |
+| YOLOv11-MFF (PLOS ONE 2025) [4] | 640 × 640 | 3.10 | 9.9 | 64.5 | 41.50 | 22.60 |
+| NSEC-YOLO (JRRAS 2024) [7] | 640 × 640 | 2.95 | 8.7 | 163.0 | 41.60 | — |
+
+`—` means that the value is not reported in the supplied comparison table. Bracketed reference numbers correspond to the group's manuscript and should be linked to complete bibliographic entries.
+
+### 4.3. Results from our experiments (1024 × 1024)
+
+| Model | Input size | Parameters (M) | FLOPs (G) | FPS | mAP@0.5 (%) | mAP@0.5:0.95 (%) |
+|---|---|---:|---:|---:|---:|---:|
+| **YOLO11n Baseline** | 512 × 512 | 2.59 | 6.4† | 78.1† | **39.75** | **20.37** |
+| Wavelet-YOLO11n-P2 (proposed) | 1024 × 1024 | 2.68 | 31.35 | 41.7 | 37.61 | 19.12 |
+
+**Current observation:** The proposed model scores **2.14 percentage points lower** on mAP@0.5 and **1.25 percentage points lower** on mAP@0.5:0.95 than the team's YOLO11n baseline. The current results therefore **do not demonstrate an overall mAP improvement**. Small-lesion AP (`AP_small`), per-class sensitivity and controlled ablations still need to be reported to evaluate the research hypotheses.
+
+† **Verification required:** The 1024 × 1024 baseline row repeats the **6.4 G FLOPs** and **78.1 FPS** shown for the 640 × 640 paper baseline. These efficiency numbers should be recalculated/measured from the actual 1024 × 1024 inference run and common hardware before being used in any efficiency comparison. The reported values are preserved here exactly as shown in the supplied table, not presented as independently verified measurements.
+
+**Comparability:** Prior-study rows use different input resolutions (512 or 640) from the group's 1024-resolution experiments; reported FPS may also depend on hardware, inference setup, test split and annotation protocol. Do **not** treat the combined table as a controlled head-to-head benchmark without matching these conditions. The use of multi-radiologist consensus label filtering, described in the group's report, must be documented in the evaluation protocol and applied consistently for a fair internal comparison.
 
 ## 5. Dataset and Splitting Protocol
 
@@ -90,16 +123,11 @@ The planned analysis includes:
 
 **Important:** Do not report ROC-AUC as a standard detector output without defining the conversion from detections to the scoring unit and explaining the evaluation method.
 
-### Results
+### Results and reporting status
 
-**No verified final results are published yet.** This table is a reporting template, not a claim of performance.
+Numerical performance comparisons are presented in **Section 4.2** (prior studies) and **Section 4.3** (the group's 1024 × 1024 experiments). Metrics for **YOLO26n**, a reproduced **YOLO11n-MFF** baseline, and a **parameter-/channel-matched non-wavelet ablation** are not yet included in the supplied results table.
 
-| Model | mAP@0.5 | mAP@0.5:0.95 | AP_small | Recall / Sensitivity | Params | FLOPs |
-|---|---:|---:|---:|---:|---:|---:|
-| YOLO11n | TBD | TBD | TBD | TBD | TBD | TBD |
-| YOLO26n | TBD | TBD | TBD | TBD | TBD | TBD |
-| YOLO11n-MFF | TBD | TBD | TBD | TBD | TBD | TBD |
-| YOLO11n-MFF-Wavelet (+ P2) | TBD | TBD | TBD | TBD | TBD | TBD |
+The research questions about **small pulmonary lesions** cannot be resolved from overall mAP alone: report `AP_small`, a stated box-size criterion, per-class recall/sensitivity, and the fixed test-set protocol when those outputs are available.
 
 ## 8. Repository Structure
 
@@ -120,47 +148,11 @@ The planned analysis includes:
 
 Create directories as implementation files become available; the structure above is a suggested target, not a statement that all files already exist.
 
-## 9. Reproducing the Study
 
-**Under preparation.** Once the training pipeline is stable, document:
+## 19. Team and Citation
 
-1. Python/CUDA/PyTorch/Ultralytics versions and hardware.
-2. How to obtain the dataset through authorized channels.
-3. How to generate the exact manifest and verify split checksums.
-4. The command and config used for each baseline and ablation.
-5. The evaluation command and metric definitions.
-6. Links or identifiers for published checkpoints, subject to hosting and licensing requirements.
+**Team:** [Group 2 / Doan Ngoc Minh Chau-Le Viet Ngoc Hoan / HuongDB2]
 
-Do not add `pip install` or `python train.py` commands until those commands are tested in this repository.
+**Research contact:** [chaudnm1108@gmail.com, blockgaming369@gmail.com]
 
-## 10. Project Status
 
-- [ ] Freeze data manifests and validate label mapping
-- [ ] Complete EDA and publish aggregate statistics
-- [ ] Reproduce YOLO11n and YOLO11n-MFF baselines
-- [ ] Implement and verify Wavelet module
-- [ ] Integrate and assess P2 detection head
-- [ ] Run capacity-matched ablations
-- [ ] Publish fixed-split evaluation results
-- [ ] Finalize paper and reproducibility instructions
-
-Update the checklist only after verifying the corresponding artifact or run.
-
-## 11. References
-
-Add complete bibliographic entries and verified links for:
-
-1. The official VinDr-CXR dataset paper and access page.
-2. The original YOLO11n-MFF paper and associated code, if available.
-3. Foundational DWT / Wavelet sources used by the implementation.
-4. Relevant small-object detection and medical imaging benchmarks.
-
-## 12. Team and Citation
-
-**Team:** [Group name / members / institution]
-
-**Research contact:** [Public contact, optional]
-
-**Citation:** A paper citation / `CITATION.cff` will be added after the manuscript is finalized.
-
-**License:** To be selected after checking the licenses of dependencies, upstream code, and data. Do not assume the dataset and code share the same license.
